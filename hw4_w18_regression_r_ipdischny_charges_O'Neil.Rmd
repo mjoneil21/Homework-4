@@ -163,6 +163,8 @@ head(ipd_train)
 str(ipd_train)
 ```
 
+
+
 ```{r}
 ggplot(ipd_train) + geom_histogram(aes(x=Total_Charges), bins = 75) + facet_wrap(~Health_Service_Area, scales = "free_y") + xlim(0, 200000)+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Total charges faceted by health service area")
 
@@ -240,6 +242,31 @@ the test data, I got a MAD of ... well, I'll tell you a little later.
 Using the information you've gained from reading about the data and doing some
 EDA, build several regression models and compute the MAD from each. Summarize
 your results in terms of which model or models appear to fit well. 
+
+```{r}
+mattsmodel_lm1 <- (lm(Total_Charges ~ Age_Group + Gender + Length_of_Stay + APR_Risk_of_Mortality + Health_Service_Area, data = ipd_train))
+summary(mattsmodel_lm1)
+median(abs(mattsmodel_lm1$residuals))
+
+mattsmodel_lm2 <- (lm(Total_Charges ~ Total_Costs + Payment_Typology_1 + Patient_Disposition + Length_of_Stay + Hospital_County, data = ipd_train))
+summary(mattsmodel_lm2)
+median(abs(mattsmodel_lm2$residuals))
+
+mattsmodel_lm3 <- (lm(Total_Charges ~ Total_Costs + Hospital_County + Length_of_Stay, data = ipd_train))
+summary(mattsmodel_lm3)
+median(abs(mattsmodel_lm3$residuals))
+
+mattsmodel_lm4 <- (lm(Total_Charges ~ Total_Costs + Hospital_County + Length_of_Stay + Type_of_Admission + APR_Severity_of_Illness_Desc, data = ipd_train))
+summary(mattsmodel_lm4)
+median(abs(mattsmodel_lm4$residuals))
+
+mattsmodel_lm5 <- (lm(Total_Charges ~ Total_Costs + Length_of_Stay + Payment_Typology_1 + Age_Group + APR_DRG_Code, data = ipd_train))
+summary(mattsmodel_lm5)
+median(abs(mattsmodel_lm5$residuals))
+```
+
+The Third model fits best when using MAD as the benchmark for goodness of fit. Sometimes simpler is better and the three predictors used in that model generally some up why hospital charges increase. The county where the hospital is located will impact the charges the patient/insurer faces by virtue of the economic landscape of that particular county. The longer the stay in the hospital the greater the charges will be to the patient/insurer. Lastly, the total costs the hospital faces will have a direct impact on the total charges the patient/insurer will see.
+
 
 Identify your top 3 models in terms of lowest MAD values to use in the next part in which you'll use them
 to make predictions on the test dataset.
