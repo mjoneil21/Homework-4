@@ -185,11 +185,13 @@ ggplot(ipd_train) + geom_histogram(aes(x=Total_Charges), bins = 75) + facet_wrap
 ggplot(ipd_train) + geom_point(aes(x=Length_of_Stay, y=Total_Charges))
 ggplot(ipd_train) + geom_point(aes(x=Total_Costs, y=Total_Charges)) + ylim(0, 500000)
 ```
+ I thought there would be a stronger relation between length of stay and total charges, this was rather surprising.
  
+ Wow you were right, the relation between cost and total charges is pretty out of whack. Total charges increases far faster than total costs.
 
 
 ```{r}
-ggplot(ipd_test) + geom_histogram(aes(x=Total_Charges), bins=50)
+ggplot(ipd_test) + geom_histogram(aes(x=Total_Charges), bins=50) + xlim(0, 1500000)
 ```
 
 
