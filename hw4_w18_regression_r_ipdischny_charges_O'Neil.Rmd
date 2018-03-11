@@ -153,8 +153,44 @@ library(ggplot2)
 ```{r}
 summary(ipd_train)
 ```
-
 Now, it's your turn ...
+
+```{r}
+head(ipd_train)
+```
+
+```{r}
+str(ipd_train)
+```
+
+```{r}
+ggplot(ipd_train) + geom_histogram(aes(x=Total_Charges), bins = 75) + facet_wrap(~Health_Service_Area, scales = "free_y") + xlim(0, 200000)+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Total charges faceted by health service area")
+
+ggplot(ipd_train) + geom_histogram(aes(x=Total_Charges), bins = 75) + facet_wrap(~Gender, scales = "free_y") + xlim(0, 200000)+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Total charges faceted by gender")
+
+ggplot(ipd_train) + geom_histogram(aes(x=Total_Charges), bins = 75) + facet_wrap(~Ethnicity, scales = "free_y") + xlim(0, 200000)+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Total charges faceted by Ethnicity")
+
+ggplot(ipd_train) + geom_histogram(aes(x=Total_Charges), bins = 75) + facet_wrap(~Age_Group, scales = "free_y") + xlim(0, 200000)+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Total charges faceted by age group")
+
+ggplot(ipd_train) + geom_histogram(aes(x=Total_Charges), bins = 75) + facet_wrap(~Type_of_Admission, scales = "free_y") + xlim(0, 200000)+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Total charges faceted by Type of admission")
+
+ggplot(ipd_train) + geom_histogram(aes(x=Total_Charges), bins = 75) + facet_wrap(~APR_Risk_of_Mortality, scales = "free_y") + xlim(0, 200000)+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Total charges faceted by APR risk of mortality")
+
+ggplot(ipd_train) + geom_histogram(aes(x=Total_Charges), bins = 75) + facet_wrap(~APR_Severity_of_Illness_Desc, scales = "free_y") + xlim(0, 200000)+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Total charges faceted by APR severity of Illness")
+
+ggplot(ipd_train) + geom_histogram(aes(x=Total_Charges), bins = 75) + facet_wrap(~Payment_Typology_1, scales = "free_y") + xlim(0, 200000)+ theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Total charges faceted by payment typology")
+```
+
+```{r}
+ggplot(ipd_train) + geom_point(aes(x=Length_of_Stay, y=Total_Charges))
+ggplot(ipd_train) + geom_point(aes(x=Total_Costs, y=Total_Charges)) + ylim(0, 500000)
+```
+ 
+
+
+```{r}
+ggplot(ipd_test) + geom_histogram(aes(x=Total_Charges), bins=50)
+```
 
 
 
