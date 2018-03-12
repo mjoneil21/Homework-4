@@ -265,6 +265,11 @@ median(abs(mattsmodel_lm4$residuals))
 mattsmodel_lm5 <- (lm(Total_Charges ~ Total_Costs + Length_of_Stay + Payment_Typology_1 + Age_Group + APR_DRG_Code, data = ipd_train))
 summary(mattsmodel_lm5)
 median(abs(mattsmodel_lm5$residuals))
+
+
+
+
+
 ```
 
 The Third model fits best when using MAD as the benchmark for goodness of fit. Sometimes simpler is better and the three predictors used in that model generally some up why hospital charges increase. The county where the hospital is located will impact the charges the patient/insurer faces by virtue of the economic landscape of that particular county. The longer the stay in the hospital the greater the charges will be to the patient/insurer. Lastly, the total costs the hospital faces will have a direct impact on the total charges the patient/insurer will see.
@@ -314,10 +319,32 @@ regression models. Here's what one of my scatterplots looks like.
 
 ![](./scatter_lm1.png)
 
+```{r}
+head(fortify(mattsmodel_lm2))
+h1 <- ggplot(aes(x=.fitted, y=ipd_train$Total_Charges), data = mattsmodel_lm2) + geom_point() + labs(x="Fitted Values", y="Actuals")
+h1
+
+head(fortify(mattsmodel_lm3))
+h2 <- ggplot(aes(x=.fitted, y=ipd_train$Total_Charges), data = mattsmodel_lm3) + geom_point() + labs(x="Fitted Values", y="Actuals")
+h2
+
+head(fortify(mattsmodel_lm4))
+h3 <- ggplot(aes(x=.fitted, y=ipd_train$Total_Charges), data = mattsmodel_lm4) + geom_point() + labs(x="Fitted Values", y="Actuals")
+h3
+```
+
+
 #### Normality of residuals
 
 Create a histogram of the residuals for your top 3 models. You may have to
 tweak the axes scales to make a nice histogram.
+
+```{r}
+ggplot(mattsmodel_lm2, aes(x=.resid)) + geom_histogram() + xlim(-150000, 150000)
+ggplot(mattsmodel_lm3, aes(x=.resid)) + geom_histogram() + xlim(-150000, 150000)
+ggplot(mattsmodel_lm4, aes(x=.resid)) + geom_histogram() + xlim(-150000, 150000)
+```
+
 
 #### Constant variance
 
@@ -326,9 +353,37 @@ your top model.
 Don't remember what kind of plot to make? See my notes on residual analysis
 or any intro stats book.
 
+```{r}
+#code from r-bloggers
+par(mfrow=c(2,2))
+plot(mattsmodel_lm2)
+
+par(mfrow=c(2,2))
+plot(mattsmodel_lm3)
+
+par(mfrow=c(2,2))
+plot(mattsmodel_lm4)
+```
+
+
 ### Make predictions for the test dataset
 
 For each of your top 3 models, make predictions for `ipd_test`.
+
+```{r}
+mattsmodel_lm2t <- (lm(Total_Charges ~ Total_Costs + Payment_Typology_1 + Patient_Disposition + Length_of_Stay + Hospital_County, data = ipd_test))
+
+mattsmodel_lm3t <- (lm(Total_Charges ~ Total_Costs + Hospital_County + Length_of_Stay, data = ipd_test))
+
+mattsmodel_lm4t <- (lm(Total_Charges ~ Total_Costs + Hospital_County + Length_of_Stay + Type_of_Admission + APR_Severity_of_Illness_Desc, data = ipd_test))
+
+summary(mattsmodel_lm2t)
+summary(mattsmodel_lm3t)
+summary(mattsmodel_lm4t)
+
+
+```
+
 
 ### Evaluate the predictions
 
@@ -341,22 +396,57 @@ So, for the model I mentioned earlier that had a MAD of 7270.340 for the trainin
 data, the MAD on the test data was 7335.559. Notice that MAD for test is 
 higher than MAD for train.
 
+```{r}
+residuals1 <-ipd_test$Total_Charges - mattsmodel_lm2t$fitted.values
+residuals2 <-ipd_test$Total_Charges - mattsmodel_lm3t$fitted.values
+residuals3 <-ipd_test$Total_Charges - mattsmodel_lm4t$fitted.values
+head(residuals1)
+
+MADtest1 <- median(abs(residuals1))
+MADtest2 <- median(abs(residuals2))
+MADtest3 <- median(abs(residuals3))
+MADtrain1 <- median(abs(mattsmodel_lm2$residuals))
+MADtrain2 <- median(abs(mattsmodel_lm3$residuals))
+MADtrain3 <- median(abs(mattsmodel_lm4$residuals))
+
+MADtrain <- MADtrain1 + MADtrain2 + MADtrain3
+Madtest <- MADtest1 + MADtest2 + MADtest3
+MAD <- data.frame(MADtrain, Madtest)
+MAD
+```
+
+
 **QUESTION:** Do you think it's typical that MAD for test would be higher than
 MAD for train? Why or why not?
 
-**QUESTION:** Which of your top 3 models had the lowest MAD for the test data? 
+Yes, it seems logical that models would preform worse on data it hasn't "seen". There could be structual patterns or other forms of statistical bias present in the training data that make the testing data harder to predict. Outliers in the training data set make it harder to predict values for the testing data. 
+
+**QUESTION:** Which of your top 3 models had the lowest MAD for the test data?
+
+The third model which was the simplest out of all of the models preformed best on the testing data. 
 
 **QUESTION:** How do the MAD values for the test data compare to the MAD values
 for the training data?
 
+The mad values for the test data seems to uniformally be higher on all of the models. If I tried my other two models on the test data I am sure that thier MAD scores would also be higher.
+
 Finally, create some sort of plot which shows the MAD values for both 
 train and test for your top 3 models. One plot.
+
+```{r}
+ggplot() + geom_point(data = Madtest, aes(x=Madtest$MADtest1)
+```
+
 
 ### Your top model
 
 Show your top performing model and discuss whether the model appears to make
 sense in terms of the variables included. Why did you choose the variables you
 did?
+
+lm(Total_Charges ~ Total_Costs + Hospital_County + Length_of_Stay, data = ipd_train
+
+Total costs have a large and disproportionate effect on hospital charges, which I was able to observe in the plot I made. The location the hospital was situated in as well as that areas economic advantages or disadvantages would have an effect on the amount charged. Lastly length of stay would  have a strong effect on the amount charged especially as that value got larger. 
 
 It will be interesting to compare the best models that everyone finds.
 
