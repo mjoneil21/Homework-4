@@ -148,6 +148,8 @@ frames that we are using for this assignment. So, no need to worry about that.**
 ```{r}
 library(dplyr)
 library(ggplot2)
+library(caret)
+library(boot)
 ```
 
 ```{r}
@@ -273,6 +275,34 @@ to make predictions on the test dataset.
 
 **HACKER EXTRA:** Use k-crossfold validation to select your top 3 models.
 
+Found the following method in R for everyone ch 21.3
+```{r}
+mattsmodel_g1 <- glm(Total_Charges ~ Age_Group + Gender + Length_of_Stay + APR_Risk_of_Mortality + Health_Service_Area, data = ipd_train, family = gaussian(link = "identity"))
+mattsmodel_CV1 <- cv.glm(ipd_train, mattsmodel_g1, K=10)
+
+mattsmodel_g2 <- glm(Total_Charges ~ Total_Costs + Payment_Typology_1 + Patient_Disposition + Length_of_Stay + Hospital_County, data = ipd_train, family = gaussian(link = "identity"))
+mattsmodel_CV2 <- cv.glm(ipd_train, mattsmodel_g2, K=10)
+
+mattsmodel_g3 <- glm(Total_Charges ~ Total_Costs + Hospital_County + Length_of_Stay, data = ipd_train, family = gaussian(link = "identity"))
+mattsmodel_CV3 <- cv.glm(ipd_train, mattsmodel_g3, K=10)
+
+mattsmodel_g4 <- glm(Total_Charges ~ Total_Costs + Hospital_County + Length_of_Stay + Type_of_Admission + APR_Severity_of_Illness_Desc, data = ipd_train, family = gaussian(link = "identity"))
+mattsmodel_CV4 <- cv.glm(ipd_train, mattsmodel_g4, K=10)
+
+mattsmodel_g5 <- glm(Total_Charges ~ Total_Costs + Length_of_Stay + Payment_Typology_1 + Age_Group + APR_DRG_Code, data = ipd_train, family = gaussian(link = "identity"))
+mattsmodel_CV5 <- cv.glm(ipd_train, mattsmodel_g5, K=10)
+
+cvResults <- as.data.frame(rbind(mattsmodel_CV1$delta, mattsmodel_CV2$delta, mattsmodel_CV3$delta, mattsmodel_CV4$delta, mattsmodel_CV5$delta))
+
+names(cvResults) <- c("Error", "Adjusted.Error")
+
+cvResults$Model <- sprintf("model%s", 1:5)
+
+cvResults
+
+```
+
+Models two, three, and four will be used to make predictions on the test data. 
 ### Model diagnostics
 
 #### Scatterplots of actual vs fitted values
