@@ -400,19 +400,15 @@ higher than MAD for train.
 residuals1 <-ipd_test$Total_Charges - mattsmodel_lm2t$fitted.values
 residuals2 <-ipd_test$Total_Charges - mattsmodel_lm3t$fitted.values
 residuals3 <-ipd_test$Total_Charges - mattsmodel_lm4t$fitted.values
-head(residuals1)
+
 
 MADtest1 <- median(abs(residuals1))
 MADtest2 <- median(abs(residuals2))
 MADtest3 <- median(abs(residuals3))
-MADtrain1 <- median(abs(mattsmodel_lm2$residuals))
-MADtrain2 <- median(abs(mattsmodel_lm3$residuals))
-MADtrain3 <- median(abs(mattsmodel_lm4$residuals))
 
-MADtrain <- MADtrain1 + MADtrain2 + MADtrain3
-Madtest <- MADtest1 + MADtest2 + MADtest3
-MAD <- data.frame(MADtrain, Madtest)
-MAD
+MADtest1
+MADtest2
+MADtest3
 ```
 
 
@@ -434,7 +430,16 @@ Finally, create some sort of plot which shows the MAD values for both
 train and test for your top 3 models. One plot.
 
 ```{r}
-ggplot() + geom_point(data = Madtest, aes(x=Madtest$MADtest1)
+
+MADtrain1 <- median(abs(mattsmodel_lm2$residuals))
+MADtrain2 <- median(abs(mattsmodel_lm3$residuals))
+MADtrain3 <- median(abs(mattsmodel_lm4$residuals))
+
+
+MAD <- c(MADtest1, MADtest2, MADtest3, MADtrain1, MADtrain2, MADtrain3)
+
+qplot(seq_along(MAD), MAD) + xlab("Count")
+#barplot(MAD, main =  "MAD values for both test and train predictions")
 ```
 
 
@@ -444,7 +449,7 @@ Show your top performing model and discuss whether the model appears to make
 sense in terms of the variables included. Why did you choose the variables you
 did?
 
-lm(Total_Charges ~ Total_Costs + Hospital_County + Length_of_Stay, data = ipd_train
+lm(Total_Charges ~ Total_Costs + Hospital_County + Length_of_Stay, data = ipd_train)
 
 Total costs have a large and disproportionate effect on hospital charges, which I was able to observe in the plot I made. The location the hospital was situated in as well as that areas economic advantages or disadvantages would have an effect on the amount charged. Lastly length of stay would  have a strong effect on the amount charged especially as that value got larger. 
 
